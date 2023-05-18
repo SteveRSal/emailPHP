@@ -1,20 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <title>Formulario de Contacto</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-     <form method="post" action="enviar_formulario.php">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required><br><br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        <label for="mensaje">Mensaje:</label>
-        <textarea id="mensaje" name="mensaje" required></textarea><br><br>
-        <input type="submit" value="Enviar">
-    </form>
+  <h1>Formulario de Contacto</h1>
+
+  <form id="contactForm" onsubmit="sendEmail(event)">
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
+
+    <label for="message">Mensaje:</label>
+    <textarea id="message" name="message" required></textarea><br>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    function sendEmail(event) {
+      event.preventDefault();
+
+      const apiKey = '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';
+      const url = 'https://api.sendgrid.com/v3/mail/send';
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+
+      axios.post(url, {
+        personalizations: [
+          {
+            to: [
+              {
+                email: 'ramirezsteven2016@gmail.com',
+              },
+            ],
+            subject: 'Asunto del correo',
+          },
+        ],
+        from: {
+          email: email,
+        },
+        content: [
+          {
+            type: 'text/plain',
+            value: `Nombre: ${name}\nEmail: ${email}\nMensaje: ${message}`,
+          },
+        ],
+      }, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          console.log('Correo enviado correctamente');
+          console.log(response.data);
+          // Aquí puedes mostrar un mensaje de éxito al usuario
+        })
+        .catch(error => {
+          console.error('Error al enviar el correo', error.response.data);
+          // Aquí puedes mostrar un mensaje de error al usuario
+        });
+    }
+  </script>
 </body>
 </html>
